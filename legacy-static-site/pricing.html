@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pricing — PromptMotion</title>
+  <meta name="description" content="Go Unlimited and copy every premium motion and Claude coding prompt, forever." />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span class="logo-dot"></span> PromptMotion</a>
+      <nav class="nav-links" id="nav-links">
+        <a href="index.html#gallery">Prompts</a>
+        <a href="index.html#how">How it works</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="index.html#faq">FAQ</a>
+      </nav>
+      <div class="nav-cta">
+        <span id="auth-slot"></span>
+        <a class="btn btn-primary btn-sm" href="#plans">Go Unlimited</a>
+        <button class="menu-toggle" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" style="padding:76px 0 34px">
+    <div class="hero-aurora"></div>
+    <div class="container">
+      <span class="pill"><span class="dot"></span> One library. Every prompt.</span>
+      <h1>Go <span class="accent-text">Unlimited</span></h1>
+      <p class="sub">Unlock every premium motion‑site design and Claude coding kit. New prompts added weekly — yours to keep.</p>
+    </div>
+  </section>
+
+  <section class="section" id="plans" style="padding-top:20px">
+    <div class="container">
+      <div class="pricing-grid">
+        <div class="price-card reveal">
+          <h3>Free</h3>
+          <div class="price">$0</div>
+          <ul>
+            <li>Copy all Free prompts</li>
+            <li>Motion‑site hero &amp; section starters</li>
+            <li>Works with Claude, Cursor, v0</li>
+          </ul>
+          <a class="btn btn-ghost" href="index.html#gallery">Browse free prompts</a>
+        </div>
+
+        <div class="price-card featured reveal">
+          <span class="ribbon">Most popular</span>
+          <h3>Unlimited — Yearly</h3>
+          <div class="price">$149<small> / year</small></div>
+          <ul>
+            <li>Everything in Free</li>
+            <li>All 2,300+ premium prompts</li>
+            <li>All Claude coding kits</li>
+            <li>New drops every week</li>
+            <li>Commercial use, no watermark</li>
+          </ul>
+          <button class="btn btn-primary" data-unlock>Go Unlimited</button>
+        </div>
+
+        <div class="price-card reveal">
+          <h3>Lifetime</h3>
+          <div class="price">$239<small> once</small></div>
+          <ul>
+            <li>Everything in Unlimited</li>
+            <li>Pay once, keep forever</li>
+            <li>All future prompt drops</li>
+            <li>Priority new‑request queue</li>
+          </ul>
+          <button class="btn btn-ghost" data-unlock>Get Lifetime</button>
+        </div>
+      </div>
+
+      <p style="text-align:center;color:var(--muted);margin-top:26px;font-size:14px" id="unlock-status"></p>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a class="brand" href="index.html"><span class="logo-dot"></span> PromptMotion</a>
+      <div class="footer-links">
+        <a href="index.html#gallery">Prompts</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="index.html#faq">FAQ</a>
+      </div>
+      <span>© 2026 PromptMotion</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    /* Go Unlimited.
+       - With Supabase + a logged-in account: sets the account's is_unlimited flag (demo).
+       - Not logged in: opens the login/signup modal.
+       - Without Supabase configured: falls back to a browser flag so the demo still works.
+       Replace the unlock with a Stripe webhook that sets is_unlimited server-side in phase 2. */
+    (function () {
+      var status = document.getElementById("unlock-status");
+      var hasSupa = !!(window.PM && window.PM.isConfigured && window.PM.isConfigured());
+
+      async function refresh() {
+        var on = false, loggedIn = false;
+        if (hasSupa) {
+          try {
+            var profile = await window.PM.getProfile();
+            loggedIn = !!profile;
+            on = !!(profile && profile.is_unlimited);
+          } catch (e) {}
+        } else {
+          try { on = localStorage.getItem("pm_unlimited") === "1"; } catch (e) {}
+        }
+        if (status) {
+          if (on) {
+            status.innerHTML = "✅ Unlimited is active on your account. Every premium prompt is unlocked. " +
+              "<a href='index.html#gallery' style='color:var(--accent-2)'>Browse now →</a>" +
+              (hasSupa ? " &nbsp;·&nbsp; <a href='#' id='reset-unlock' style='color:var(--muted)'>turn off (demo)</a>" : "");
+          } else if (hasSupa && !loggedIn) {
+            status.innerHTML = "Log in or create an account first, then click a plan to unlock. " +
+              "<a href='#' id='login-here' style='color:var(--accent-2)'>Log in →</a>";
+          } else {
+            status.innerHTML = "Payments aren't wired up yet — these buttons unlock premium prompts in demo mode so you can preview the full library.";
+          }
+        }
+        var reset = document.getElementById("reset-unlock");
+        if (reset) reset.addEventListener("click", async function (e) {
+          e.preventDefault();
+          if (hasSupa) { try { await window.PM.setUnlimited(false); } catch (er) {} }
+          else { try { localStorage.removeItem("pm_unlimited"); } catch (er) {} }
+          refresh();
+        });
+        var loginHere = document.getElementById("login-here");
+        if (loginHere) loginHere.addEventListener("click", function (e) {
+          e.preventDefault(); if (window.PM_openAuth) window.PM_openAuth("in");
+        });
+      }
+
+      document.querySelectorAll("[data-unlock]").forEach(function (b) {
+        b.addEventListener("click", async function () {
+          if (hasSupa) {
+            var user = await window.PM.getUser();
+            if (!user) { if (window.PM_openAuth) window.PM_openAuth("up"); return; }
+            try { await window.PM.setUnlimited(true); b.textContent = "✓ Unlocked"; }
+            catch (e) { if (status) status.textContent = e.message || "Could not unlock."; }
+          } else {
+            try { localStorage.setItem("pm_unlimited", "1"); } catch (e) {}
+            b.textContent = "✓ Unlocked";
+          }
+          refresh();
+        });
+      });
+      refresh();
+    })();
+  </script>
+</body>
+</html>

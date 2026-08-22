@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PromptMotion — Prompts that build motion & Claude‑coded websites</title>
+  <meta name="description" content="A premium library of AI prompts that build stunning animated motion websites and full coded sites through Claude. Copy, paste, launch." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span class="logo-dot"></span> PromptMotion</a>
+      <nav class="nav-links" id="nav-links">
+        <a href="#gallery">Prompts</a>
+        <a href="#how">How it works</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="nav-cta">
+        <span id="auth-slot"></span>
+        <a class="btn btn-primary btn-sm" href="pricing.html">Go Unlimited</a>
+        <button class="menu-toggle" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-aurora"></div>
+    <div class="container">
+      <span class="pill"><span class="dot"></span> 2,000+ prompts · new drops weekly</span>
+      <h1>Prompts that build <span class="accent-text">motion websites</span> &amp; coded sites through Claude</h1>
+      <p class="sub">Browse a design, copy the prompt, paste it into Claude, Cursor, v0 or Lovable — and launch a stunning animated site in minutes. No design skills required.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#gallery">Browse prompts</a>
+        <a class="btn btn-ghost" href="pricing.html">See pricing</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><b>2,300+</b><span>Motion prompts</span></div>
+        <div class="stat"><b>150+</b><span>Animated sections</span></div>
+        <div class="stat"><b>40+</b><span>Claude coding kits</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="section" id="gallery">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>The prompt library</h2>
+        <p>Copy‑paste prompts for animated motion sites and full builds through Claude. Free ones are ready to grab — premium unlocks with Go Unlimited.</p>
+      </div>
+      <div class="filters" id="filters"></div>
+      <div class="grid" id="prompt-grid"></div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section" id="how">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>How it works</h2>
+        <p>Three steps from idea to a live, animated website.</p>
+      </div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+        <div class="card in" style="opacity:1;transform:none">
+          <div class="card-body">
+            <h3>1 · Browse &amp; copy</h3>
+            <p class="desc">Find a motion design or a Claude coding kit you love and copy its prompt with one click.</p>
+          </div>
+        </div>
+        <div class="card in" style="opacity:1;transform:none">
+          <div class="card-body">
+            <h3>2 · Paste into your AI</h3>
+            <p class="desc">Drop it into Claude, Cursor, v0, Bolt or Lovable. Add your product details where marked.</p>
+          </div>
+        </div>
+        <div class="card in" style="opacity:1;transform:none">
+          <div class="card-body">
+            <h3>3 · Customize &amp; launch</h3>
+            <p class="desc">Tweak colors and copy, then ship. You own the output — no lock‑in, no watermark.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="container" style="max-width:760px">
+      <div class="section-head reveal">
+        <h2>Questions</h2>
+        <p>Everything you need to know before going Unlimited.</p>
+      </div>
+      <div class="reveal">
+        <div class="card in" style="opacity:1;transform:none;margin-bottom:14px">
+          <div class="card-body"><h3>What exactly am I buying?</h3>
+            <p class="desc">Access to copy every premium prompt in the library — motion‑site designs and Claude coding kits. The prompts generate the code; you own whatever your AI builds.</p></div>
+        </div>
+        <div class="card in" style="opacity:1;transform:none;margin-bottom:14px">
+          <div class="card-body"><h3>Which AI tools do the prompts work with?</h3>
+            <p class="desc">Claude, Cursor, v0, Bolt, Lovable and Replit. Each prompt lists its best‑fit builders.</p></div>
+        </div>
+        <div class="card in" style="opacity:1;transform:none">
+          <div class="card-body"><h3>Do I need to code?</h3>
+            <p class="desc">No. Copy, paste, and describe your product. For coding kits, Claude scaffolds the whole app for you.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <a class="brand" href="index.html"><span class="logo-dot"></span> PromptMotion</a>
+      <div class="footer-links">
+        <a href="#gallery">Prompts</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="#faq">FAQ</a>
+        <a href="#">Contact</a>
+      </div>
+      <span>© 2026 PromptMotion</span>
+    </div>
+  </footer>
+
+  <!-- Modal shell -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/prompts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

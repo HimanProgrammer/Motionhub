@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — PromptMotion</title>
+  <meta name="robots" content="noindex" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html"><span class="logo-dot"></span> PromptMotion</a>
+      <nav class="nav-links" id="nav-links">
+        <a href="index.html#gallery">Prompts</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="admin.html">Admin</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="btn btn-ghost btn-sm" href="index.html">← Back to site</a>
+        <button class="menu-toggle" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head" style="margin-bottom:26px">
+        <h2>Admin</h2>
+        <p>Add prompts to the live gallery. Only accounts with <code>is_admin</code> can write.</p>
+      </div>
+      <div id="admin-root">
+        <p class="builders" style="text-align:center">Loading…</p>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/prompts.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
