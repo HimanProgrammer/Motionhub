@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "promptmotion",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["server.js"],
+      "name": "motionhub",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
       "port": 5050
     }
   ]
