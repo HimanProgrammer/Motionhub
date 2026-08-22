@@ -63,25 +63,18 @@ export default function Gallery({ auth }) {
               return (
                 <article className="card in" key={p.id}>
                   <div className="card-preview" style={{ background: grad }}>
-                    <div className="site-mock" aria-hidden="true">
-                      <div className="mock-bar">
-                        <i className="dot r" /><i className="dot y" /><i className="dot g" />
-                        <span className="mock-url">{p.id}.site</span>
-                      </div>
-                      <div className="mock-viewport">
-                        <div className="mock-nav">
-                          <span className="mock-logo" />
-                          <span className="mock-links"><i /><i /><i /></span>
-                          <span className="mock-pill" />
-                        </div>
-                        <div className="mock-hero">
-                          <span className="mock-h1" />
-                          <span className="mock-h1 short" />
-                          <span className="mock-sub" />
-                          <span className="mock-ctas"><b /><em /></span>
-                        </div>
-                      </div>
-                    </div>
+                    {p.preview && /\.(mp4|webm)(\?|$)/i.test(p.preview) ? (
+                      <video
+                        className="card-media"
+                        src={p.preview}
+                        autoPlay loop muted playsInline preload="metadata"
+                        aria-hidden="true"
+                      />
+                    ) : p.preview ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img className="card-media" src={p.preview} alt="" loading="lazy" aria-hidden="true" />
+                    ) : null}
+                    <span className="card-media-veil" />
                     <span className={"badge " + (p.tier === "premium" ? "premium" : "free")}>
                       {p.tier === "premium" ? "Premium" : "Free"}
                     </span>
