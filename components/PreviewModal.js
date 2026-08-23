@@ -2,12 +2,15 @@
 
 import { createPortal } from "react-dom";
 
-/* Full-screen live preview of AI-generated HTML, rendered in a sandboxed iframe. */
-export default function PreviewModal({ html, title, onClose }) {
-  if (!html) return null;
+/* Full-screen live preview, rendered in a sandboxed iframe.
+   Pass either `html` (AI-generated markup, shown via srcDoc) or `src` (a static demo
+   page under /public, loaded directly — used for the "live website" template previews). */
+export default function PreviewModal({ html, src, title, onClose }) {
+  if (!html && !src) return null;
   if (typeof document === "undefined") return null;
 
   function openInNewTab() {
+    if (src) { window.open(src, "_blank"); return; }
     const blob = new Blob([html], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     window.open(url, "_blank");
@@ -43,9 +46,9 @@ export default function PreviewModal({ html, title, onClose }) {
         <div style={{ flex: 1, padding: "0 22px 22px", minHeight: 0 }}>
           <iframe
             title={`Preview of ${title}`}
-            srcDoc={html}
+            {...(src ? { src } : { srcDoc: html })}
             sandbox="allow-scripts allow-same-origin"
-            style={{ width: "100%", height: "100%", border: "1px solid var(--border)", borderRadius: 12, background: "#fff" }}
+            style={{ width: "100%", height: "100%", border: "1px solid var(--border)", borderRadius: 12, background: "#0a0a12" }}
           />
         </div>
       </div>

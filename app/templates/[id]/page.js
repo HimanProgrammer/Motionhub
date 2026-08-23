@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import PreviewModal from "@/components/PreviewModal";
 import { CATEGORIES, PROMPTS_PUBLIC as LOCAL_PROMPTS } from "@/lib/promptsPublic";
 import { getPrompts, subscribeToPrompts } from "@/lib/supabaseClient";
-import { getPreview, isVideo, useCasesFor } from "@/lib/previews";
+import { getPreview, getDemoUrl, isVideo, useCasesFor } from "@/lib/previews";
 import { runPrompt, getSavedKey, saveKey } from "@/lib/runPrompt";
 import { useAuth } from "@/lib/useAuth";
 import { useReveal } from "@/lib/useReveal";
@@ -41,6 +41,7 @@ export default function TemplatePage() {
   const [runError, setRunError] = useState("");
   const [resultHtml, setResultHtml] = useState("");
   const [showPreview, setShowPreview] = useState(false);
+  const [showLivePreview, setShowLivePreview] = useState(false);
   const relatedRef = useReveal([id]);
 
   // Merge DB prompts over the local seed so admin edits show here too.
@@ -114,15 +115,16 @@ export default function TemplatePage() {
               <p className="tpl-desc">{p.description}</p>
 
               <div className="tpl-actions">
+                <button className="btn btn-primary" onClick={() => setShowLivePreview(true)}>👁 Preview live website</button>
                 {locked ? (
-                  <Link className="btn btn-primary" href="/pricing">🔒 Unlock — Go Unlimited</Link>
+                  <Link className="btn btn-ghost" href="/pricing">🔒 Unlock — Go Unlimited</Link>
                 ) : (
                   <>
-                    <button className="btn btn-primary" onClick={() => copyText(p.prompt, () => { setCopied(true); setTimeout(() => setCopied(false), 1600); })}>
+                    <button className="btn btn-ghost" onClick={() => copyText(p.prompt, () => { setCopied(true); setTimeout(() => setCopied(false), 1600); })}>
                       {copied ? "✓ Copied" : "📋 Copy prompt"}
                     </button>
                     <button className="btn btn-ghost" onClick={openRun}>▶ Run with AI</button>
-                    {resultHtml && <button className="btn btn-ghost" onClick={() => setShowPreview(true)}>👁 Preview</button>}
+                    {resultHtml && <button className="btn btn-ghost" onClick={() => setShowPreview(true)}>👁 AI result</button>}
                   </>
                 )}
               </div>
@@ -233,6 +235,9 @@ export default function TemplatePage() {
 
       {showPreview && resultHtml && (
         <PreviewModal html={resultHtml} title={p.title} onClose={() => setShowPreview(false)} />
+      )}
+      {showLivePreview && (
+        <PreviewModal src={getDemoUrl(p)} title={p.title} onClose={() => setShowLivePreview(false)} />
       )}
     </>
   );
