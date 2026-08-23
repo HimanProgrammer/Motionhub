@@ -9,6 +9,7 @@ import {
   getUser, getProfile, getPromptsAdmin, addPrompt, updatePrompt, deletePrompt, upsertPrompts,
 } from "@/lib/supabaseClient";
 import { runPrompt, getSavedKey, saveKey } from "@/lib/runPrompt";
+import { fileToBase64, imageToTemplate } from "@/lib/imageToTemplate";
 import PreviewModal from "@/components/PreviewModal";
 
 const MODELS = {
@@ -185,6 +186,14 @@ function Dashboard({ user, onLogout }) {
   const [resultHtml, setResultHtml] = useState("");
   const [showLivePreview, setShowLivePreview] = useState(false);
 
+  // Image → motion site: drop a design screenshot, Claude reads it and fills in
+  // the whole template (including deciding free vs premium), ready to preview & publish.
+  const [img, setImg] = useState(null);          // { base64, dataUrl, mediaType, name }
+  const [imgNotes, setImgNotes] = useState("");
+  const [converting, setConverting] = useState(false);
+  const [convertError, setConvertError] = useState("");
+  const [autoTier, setAutoTier] = useState("");  // tier Claude chose, for the badge
+
   useEffect(() => { loadList(); }, []);
 
   async function loadList() {
@@ -227,6 +236,40 @@ function Dashboard({ user, onLogout }) {
       catch { return ""; }
     }
     return form.prompt.trim();
+  }
+
+  async function pickImage(file) {
+    if (!file) return;
+    if (!/^image\//.test(file.type)) { setConvertError("That's not an image file."); return; }
+    if (file.size > 5 * 1024 * 1024) { setConvertError("Image is over 5MB — please use a smaller screenshot."); return; }
+    setConvertError("");
+    try {
+      const r = await fileToBase64(file);
+      setImg({ ...r, name: file.name });
+    } catch (e) { setConvertError(e.message); }
+  }
+
+  async function convertImage() {
+    if (!img) { setConvertError("Choose a design screenshot first."); return; }
+    const key = apiKey.trim() || getSavedKey("claude");
+    if (!key) { setConvertError("Enter your Anthropic API key below first."); setShowRunPanel(true); return; }
+    saveKey("claude", key);
+    setApiKey(key);
+    setConverting(true); setConvertError(""); setAutoTier("");
+    try {
+      const tpl = await imageToTemplate({
+        apiKey: key,
+        model: provider === "claude" ? model : MODELS.claude[0], // vision = Claude only
+        imageBase64: img.base64, mediaType: img.mediaType, notes: imgNotes,
+      });
+      setForm(fromObj(tpl));
+      setEditingId(null);
+      setCodeMode(false);
+      setAutoTier(tpl.tier);
+      setMsg({ text: `Claude built "${tpl.title}" from your image and marked it ${tpl.tier.toUpperCase()}. Review it, preview it, then save.`, color: "#7dffb0" });
+    } catch (e) {
+      setConvertError(e.message || "Conversion failed.");
+    } finally { setConverting(false); }
   }
 
   function switchProvider(pr) { setProvider(pr); setModel(MODELS[pr][0]); setApiKey(getSavedKey(pr)); }
@@ -326,6 +369,65 @@ function Dashboard({ user, onLogout }) {
         </div>
       </div>
       <p style={{ minHeight: 20, fontSize: 14, color: msg.color }}>{msg.text}</p>
+
+      <div className="card in" style={{ maxWidth: 760, marginBottom: 20 }}>
+        <div className="card-body">
+          <h3 style={{ margin: "0 0 4px" }}>🖼 Image → motion site</h3>
+          <p className="desc" style={{ margin: "0 0 16px" }}>
+            Drop a design screenshot. Claude reads it, writes the full master prompt, picks the
+            category and colours, and decides Free vs Premium on its own — then you preview and publish.
+          </p>
+
+          <label
+            htmlFor="tpl-image"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => { e.preventDefault(); pickImage(e.dataTransfer.files?.[0]); }}
+            style={{
+              display: "block", border: "1px dashed var(--border)", borderRadius: 14, padding: img ? 12 : 30,
+              textAlign: "center", cursor: "pointer", background: "var(--surface-2)", marginBottom: 12,
+            }}
+          >
+            {img ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={img.dataUrl} alt="" style={{ maxHeight: 220, maxWidth: "100%", borderRadius: 10, margin: "0 auto" }} />
+            ) : (
+              <>
+                <div style={{ fontSize: 26, marginBottom: 6 }}>⬆</div>
+                <b style={{ fontSize: 14.5 }}>Drop a screenshot, or click to choose</b>
+                <p className="builders" style={{ margin: "6px 0 0" }}>PNG, JPEG, WebP or GIF · up to 5MB</p>
+              </>
+            )}
+          </label>
+          <input
+            id="tpl-image" type="file" accept="image/png,image/jpeg,image/webp,image/gif"
+            style={{ display: "none" }} onChange={(e) => pickImage(e.target.files?.[0])}
+          />
+          {img && (
+            <p className="builders" style={{ margin: "0 0 12px" }}>
+              {img.name} · <button className="btn btn-ghost btn-sm" style={{ padding: "2px 10px" }} onClick={() => { setImg(null); setAutoTier(""); }}>remove</button>
+            </p>
+          )}
+
+          <Field
+            label="Anything specific? (optional)"
+            placeholder="e.g. call the brand Propertix, make the CTA gold"
+            value={imgNotes} onChange={setImgNotes}
+          />
+
+          {convertError && <p style={{ color: "#ff8a9c", fontSize: 14, margin: "0 0 10px" }}>{convertError}</p>}
+
+          <div className="card-actions">
+            <button className="btn btn-primary" onClick={convertImage} disabled={converting || !img}>
+              {converting ? "Claude is reading your image…" : "✨ Convert to motion site"}
+            </button>
+            {autoTier && (
+              <span className={"badge " + (autoTier === "premium" ? "premium" : "free")}>
+                Claude chose: {autoTier}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
 
       <div className="card in" style={{ maxWidth: 760 }}>
         <div className="card-body">

@@ -552,6 +552,152 @@ ${footer(t)}`;
   return page({ title: t.brand, css, body });
 }
 
+/* ---------- Layout: corporate / property services (navy + gold) ---------- */
+function propertyLayout(t) {
+  const css = baseCss(t.g1, t.g2, t.fonts).replace("--bg:#07070c;--bg2:#0c0c14", "--bg:#0a1628;--bg2:#0d1c31") + `
+.hero{position:relative;overflow:hidden;padding:0}
+.hero-grid{display:grid;grid-template-columns:1fr 1.15fr;align-items:center;gap:0;min-height:76vh}
+.hero-copy{padding:70px 24px 70px max(24px,calc((100vw - 1180px)/2))}
+.hero-copy h1{font-size:clamp(2.2rem,4.6vw,3.7rem);margin:0 0 20px;font-weight:800}
+.hero-copy h1 span{display:block;opacity:0;transform:translateY(24px);animation:rise .85s cubic-bezier(.16,1,.3,1) forwards}
+.hero-copy h1 span:nth-child(2){animation-delay:.12s;color:var(--g2)}
+.hero-copy h1 span:nth-child(3){animation-delay:.24s}
+@keyframes rise{to{opacity:1;transform:none}}
+.hero-copy .sub{color:var(--muted);font-size:1.05rem;max-width:430px;margin:0 0 30px;opacity:0;animation:rise .85s .34s cubic-bezier(.16,1,.3,1) forwards}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:38px;opacity:0;animation:rise .85s .44s cubic-bezier(.16,1,.3,1) forwards}
+.trust{display:flex;gap:34px;flex-wrap:wrap;opacity:0;animation:rise .85s .56s cubic-bezier(.16,1,.3,1) forwards}
+.trust div{display:flex;align-items:center;gap:11px}
+.trust .tico{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--g2);font-size:18px;flex:none}
+.trust b{display:block;font-size:13px}.trust span{color:var(--muted);font-size:12.5px}
+.hero-img{position:relative;height:100%;min-height:420px}
+.hero-img img{width:100%;height:100%;object-fit:cover}
+.hero-img::after{content:"";position:absolute;inset:0;background:linear-gradient(to right,var(--bg) 0%,rgba(10,22,40,.55) 22%,transparent 60%)}
+.rule{width:56px;height:3px;border-radius:2px;background:var(--g2);margin:14px auto 18px}
+.rule.l{margin-left:0}
+.svc{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.svc-card{background:var(--bg2);border:1px solid var(--border);border-radius:15px;overflow:hidden;transition:transform .25s ease,border-color .25s ease}
+.svc-card:hover{transform:translateY(-6px);border-color:color-mix(in srgb,var(--g2) 45%,transparent)}
+.svc-top{position:relative;height:140px}
+.svc-top img{width:100%;height:100%;object-fit:cover}
+.svc-ico{position:absolute;left:16px;bottom:-18px;width:44px;height:44px;border-radius:12px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--g2);font-size:19px}
+.svc-body{padding:32px 18px 20px}
+.svc-body h3{margin:0 0 8px;font-size:1.02rem}
+.svc-body p{margin:0 0 14px;color:var(--muted);font-size:13.6px}
+.more{color:var(--g2);font-size:13.5px;font-weight:700;display:inline-flex;align-items:center;gap:7px}
+.more i{transition:transform .25s ease}
+.more:hover i{transform:translateX(4px)}
+.why{background:var(--g2);color:#20180a;border-radius:15px;padding:22px;display:flex;flex-direction:column}
+.why .wico{font-size:26px;margin-bottom:12px}
+.why h3{margin:0 0 14px;font-size:1.05rem;color:#20180a}
+.why ul{list-style:none;padding:0;margin:0 0 16px;display:flex;flex-direction:column;gap:10px}
+.why li{display:flex;gap:9px;font-size:12.8px;font-weight:600}
+.why li i{color:#fff}
+.why .strip{margin-top:auto;border-radius:10px;overflow:hidden;height:92px}
+.why .strip img{width:100%;height:100%;object-fit:cover}
+.about-card{display:grid;grid-template-columns:1fr 1.1fr;gap:0;background:var(--bg2);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.about-card .ac-copy{padding:48px 40px}
+.about-card .kick{color:var(--g2);font-size:12.5px;font-weight:700;letter-spacing:.1em}
+.about-card h2{font-size:clamp(1.5rem,3vw,2.1rem);margin:10px 0 0}
+.about-card p{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+.about-card img{width:100%;height:100%;object-fit:cover;min-height:330px}
+.listings{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.listing{border-radius:14px;overflow:hidden;transition:transform .25s ease}
+.listing:hover{transform:translateY(-6px)}
+.listing .ph{height:190px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.listing .ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.listing:hover .ph img{transform:scale(1.07)}
+.listing h4{margin:14px 0 5px;font-size:1.02rem}
+.listing p{margin:0;color:var(--muted);font-size:13.4px}
+.news input{width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);font:inherit;font-size:13.5px;margin-bottom:10px}
+.news input:focus{outline:none;border-color:var(--g2)}
+.news button{width:100%;padding:11px;border-radius:8px;border:0;background:var(--g2);color:#20180a;font:inherit;font-weight:800;font-size:13.5px;cursor:pointer;transition:.2s}
+.news button:hover{filter:brightness(1.08)}
+.news .ok{color:var(--g2);font-size:12.5px;margin:8px 0 0;display:none}
+.news.done .ok{display:block}
+@media(max-width:1000px){.svc{grid-template-columns:repeat(2,1fr)}.listings{grid-template-columns:1fr 1fr}}
+@media(max-width:860px){
+  .hero-grid{grid-template-columns:1fr}.hero-copy{padding:56px 24px 40px}
+  .hero-img{min-height:280px}.hero-img::after{background:linear-gradient(to bottom,rgba(10,22,40,.6),transparent 40%)}
+  .svc,.listings{grid-template-columns:1fr}.about-card{grid-template-columns:1fr}
+}
+`;
+  const body = `
+${nav(t, [{ id: "services", label: "Services" }, { id: "about", label: "About Us" }, { id: "properties", label: "Properties" }, { id: "reviews", label: "Owners" }, { id: "faq", label: "Contact" }])}
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <h1><span>${t.h1a}</span><span>${t.h1b}</span><span>${t.h1c}</span></h1>
+      <p class="sub">${t.sub}</p>
+      <div class="hero-btns"><a class="btn btn-primary" href="#services">${t.cta1}</a><a class="btn btn-ghost" href="#properties">${t.cta2}</a></div>
+      <div class="trust">
+        <div><span class="tico"><i class="ri-shield-check-line"></i></span><div><b>Trusted</b><span>Property Management</span></div></div>
+        <div><span class="tico"><i class="ri-group-line"></i></span><div><b>Happy Owners</b><span>&amp; Tenants</span></div></div>
+      </div>
+    </div>
+    <div class="hero-img"><img src="${t.img}" alt="Managed apartment building"></div>
+  </div>
+</section>
+
+<section class="section" id="services"><div class="wrap">
+  <div class="shead reveal"><h2>${t.svcTitle}</h2><div class="rule"></div><p>${t.svcSub}</p></div>
+  <div class="svc">
+    ${t.services.map((s) => `<div class="svc-card reveal">
+      <div class="svc-top"><img src="${s.img}" alt="${s.t}" loading="lazy"><span class="svc-ico"><i class="${s.i}"></i></span></div>
+      <div class="svc-body"><h3>${s.t}</h3><p>${s.d}</p><a class="more" href="#">Learn More <i class="ri-arrow-right-line"></i></a></div>
+    </div>`).join("")}
+    <div class="why reveal">
+      <span class="wico"><i class="ri-home-4-line"></i></span><h3>Why Choose Us?</h3>
+      <ul>${t.why.map((w) => `<li><i class="ri-check-line"></i>${w}</li>`).join("")}</ul>
+      <div class="strip"><img src="${t.whyImg}" alt="" loading="lazy"></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="section" id="about"><div class="wrap">
+  <div class="about-card reveal">
+    <div class="ac-copy">
+      <span class="kick">${t.aboutKicker}</span>
+      <h2>${t.aboutTitle}</h2><div class="rule l"></div>
+      <p>${t.aboutBody}</p>
+      <a class="btn btn-primary" href="#reviews">More About Us</a>
+    </div>
+    <img src="${t.aboutImg}" alt="" loading="lazy">
+  </div>
+</div></section>
+
+<section class="section" id="properties"><div class="wrap">
+  <div class="shead reveal"><h2>Featured Properties</h2><div class="rule"></div><p>Explore a selection of properties we currently manage.</p></div>
+  <div class="listings">
+    ${t.listings.map((l) => `<div class="listing reveal"><div class="ph"><img src="${l.img}" alt="${l.t}" loading="lazy"></div><h4>${l.t}</h4><p>${l.m}</p></div>`).join("")}
+  </div>
+</div></section>
+
+${statsSection(t.stats)}
+${testimonialsSection(t)}
+${pricingSection(t)}
+${faqSection(t)}
+${ctaSection(t)}
+
+<footer><div class="wrap">
+  <div class="fgrid">
+    <div><div class="brand"><i></i>${t.brand}</div><p>${t.footBlurb}</p>
+      <div class="socials" style="margin-top:16px"><a href="#"><i class="ri-facebook-fill"></i></a><a href="#"><i class="ri-twitter-x-line"></i></a><a href="#"><i class="ri-linkedin-fill"></i></a><a href="#"><i class="ri-instagram-line"></i></a></div>
+    </div>
+    <div class="fcol"><h5>Quick Links</h5><a href="#">Home</a><a href="#about">About Us</a><a href="#services">Services</a><a href="#properties">Properties</a><a href="#">Owners</a><a href="#">Tenants</a></div>
+    <div class="fcol"><h5>Our Services</h5><a href="#">Residential Management</a><a href="#">Commercial Management</a><a href="#">Maintenance Services</a><a href="#">Tenant Placement</a><a href="#">Rent Collection</a></div>
+    <div class="fcol"><h5>Newsletter</h5><p style="color:var(--muted);font-size:13.5px;margin:0 0 12px">Subscribe for property management tips.</p>
+      <form class="news" id="news" novalidate><input type="email" placeholder="Your email address" required><button type="submit">Subscribe</button><p class="ok">✓ Thanks — you're subscribed.</p></form>
+    </div>
+  </div>
+  <div class="fbot" style="justify-content:center"><span>© 2026 ${t.brand} Management. A MotionHub live demo.</span></div>
+</div></footer>`;
+  const script = `
+const nf=document.getElementById('news');
+if(nf)nf.onsubmit=e=>{e.preventDefault();const i=nf.querySelector('input');if(!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(i.value)){i.style.borderColor='#ff8a9c';return}i.style.borderColor='';nf.classList.add('done');i.value=''};
+`;
+  return page({ title: t.brand, css, body, script });
+}
+
 /* --------------------------- shared content bits -------------------------- */
 const genericFaq = (thing) => [
   { q: `What exactly is ${thing}?`, a: `${thing} is a complete, production-ready template you can copy, customise and ship — no design work required.` },
@@ -824,9 +970,53 @@ const items = [
     faq: genericFaq("CHECKMATE"),
     ctaTitle: "Your next move starts now", ctaSub: "Free to play. No ads, ever.",
     footBlurb: "A chess training app built around deliberate practice — daily puzzles, structured lessons and honest analytics." },
+  { id: "propertix-property-management", layout: "property", brand: "Propertix", g1: "#0a1628", g2: "#e8b04a",
+    fonts: { display: "'Plus Jakarta Sans',Inter,sans-serif" },
+    navCta: "Get a Quote", img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1600&q=80",
+    h1a: "We Manage", h1b: "Properties,", h1c: "You Enjoy Peace.",
+    sub: "Professional property management services that protect your investment and maximize your returns.",
+    cta1: "Our Services", cta2: "View Properties",
+    svcTitle: "Our Management Services",
+    svcSub: "We provide end-to-end property management solutions tailored to your needs — from marketing and tenant placement to maintenance and financial reporting.",
+    services: [
+      { i: "ri-home-4-line", t: "Residential Management", d: "Comprehensive management for single-family homes, apartments, and multi-unit properties.", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80" },
+      { i: "ri-building-2-line", t: "Commercial Management", d: "Expert management for office spaces, retail properties, and commercial complexes.", img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80" },
+      { i: "ri-tools-line", t: "Maintenance Services", d: "24/7 maintenance support to ensure your property stays in perfect condition.", img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80" },
+    ],
+    why: ["Experienced Management Team", "Transparent Communication", "Maximized Rental Income", "Minimal Vacancy Rates", "Reliable Maintenance"],
+    whyImg: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&q=80",
+    aboutKicker: "About Propertix", aboutTitle: "We Take Care<br>So You Don't Have To",
+    aboutBody: "Propertix Management is a full-service property management company dedicated to providing exceptional service to property owners and tenants. Our goal is to protect your investment, increase property value, and deliver peace of mind.",
+    aboutImg: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&q=80",
+    listings: [
+      { t: "Modern Family Home", m: "3 Bed • 2 Bath • 2200 Sqft", img: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=80" },
+      { t: "Downtown Office Space", m: "2000 Sqft • Prime Location", img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80" },
+      { t: "Luxury Apartment", m: "2 Bed • 2 Bath • City View", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80" },
+    ],
+    stats: [{ n: "2400", l: "Units managed" }, { n: "98%", l: "Occupancy rate" }, { n: "18", l: "Years in business" }, { n: "4.9", l: "Owner rating" }],
+    revTitle: "What owners and tenants say",
+    reviews: [
+      { q: "Two rentals with Propertix for six years. I've never once had to chase a repair or a rent payment.", n: "Gloria Mendez", r: "Owner · 2 properties" },
+      { q: "They filled a vacancy in nine days at above my asking rent. The previous manager took two months.", n: "Aaron Whitlock", r: "Owner · 14 units" },
+      { q: "Maintenance actually answers at 9pm. As a tenant that's the whole review.", n: "Nia Foster", r: "Tenant · Luxury Apartment" },
+    ],
+    priceTitle: "Management plans", priceSub: "Flat percentage of collected rent. No leasing surprises.",
+    tiers: [
+      { n: "Essential", p: "6%", per: "of monthly rent", f: ["Rent collection", "Owner portal & statements", "Tenant screening", "Annual inspection"], cta: "Get started" },
+      { n: "Full Service", p: "8%", per: "of monthly rent", pop: true, f: ["Everything in Essential", "24/7 maintenance coordination", "Marketing & tenant placement", "Quarterly inspections", "Eviction protection"], cta: "Most owners pick this" },
+      { n: "Commercial", p: "Custom", per: "tailored quote", f: ["Everything in Full Service", "CAM reconciliation", "Lease negotiation", "Dedicated account manager"], cta: "Request a quote" },
+    ],
+    faq: [
+      { q: "What does Propertix actually handle?", a: "Marketing, tenant screening and placement, rent collection, maintenance coordination, inspections, and monthly financial reporting. You approve the big decisions; we handle everything else." },
+      { q: "How quickly do you fill a vacancy?", a: "Our current average is 14 days from listing to signed lease. We market across the major portals plus our own tenant waitlist." },
+      { q: "When do I get paid?", a: "Owner disbursements go out by the 10th of each month, with a full statement in your owner portal. No holding periods." },
+      { q: "Can I cancel the agreement?", a: "Yes — 30 days' written notice, no termination fee. We'd rather earn the renewal than trap you in a contract." },
+    ],
+    ctaTitle: "Ready to stop managing and start owning?", ctaSub: "Free rental analysis for your property, no obligation.",
+    footBlurb: "Professional property management services that make property ownership simple and profitable." },
 ];
 
-const layouts = { hero: heroLayout, saas: saasLayout, dashboard: dashboardLayout };
+const layouts = { hero: heroLayout, saas: saasLayout, dashboard: dashboardLayout, property: propertyLayout };
 for (const t of items) {
   const html = layouts[t.layout](t);
   fs.writeFileSync(path.join(OUT_DIR, `${t.id}.html`), html);

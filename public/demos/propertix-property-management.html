@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Propertix — MotionHub live demo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+:root{--g1:#0a1628;--g2:#e8b04a;--bg:#0a1628;--bg2:#0d1c31;--text:#f3f3f8;--muted:#a3a8bd;--card:rgba(255,255,255,.05);--border:rgba(255,255,255,.12)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;overflow-x:hidden;line-height:1.6}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+h1,h2,h3{font-family:'Plus Jakarta Sans',Inter,sans-serif;letter-spacing:-.02em;line-height:1.12}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.acc{background:linear-gradient(90deg,var(--g1),var(--g2));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* progress bar */
+.prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:200;background:linear-gradient(90deg,var(--g1),var(--g2));box-shadow:0 0 12px color-mix(in srgb,var(--g2) 70%,transparent)}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(14px);background:rgba(7,7,12,.7);border-bottom:1px solid var(--border)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:70px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;font-family:'Plus Jakarta Sans',Inter,sans-serif}
+.brand i{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--g1),var(--g2));box-shadow:0 0 18px color-mix(in srgb,var(--g2) 60%,transparent);animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+.navlinks{display:flex;gap:28px}
+.navlinks a{color:var(--muted);font-size:14.5px;font-weight:500;position:relative;transition:color .15s}
+.navlinks a::after{content:"";position:absolute;left:0;right:100%;bottom:-5px;height:2px;background:linear-gradient(90deg,var(--g1),var(--g2));border-radius:2px;transition:right .25s ease}
+.navlinks a:hover{color:var(--text)}
+.navlinks a:hover::after{right:0}
+.burger{display:none;background:none;border:0;color:var(--text);font-size:24px;cursor:pointer}
+.drawer{display:none;flex-direction:column;gap:16px;padding:18px 24px;border-bottom:1px solid var(--border);background:var(--bg2)}
+.drawer.open{display:flex}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-weight:700;font-size:14.5px;border:1px solid transparent;cursor:pointer;font-family:inherit;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(90deg,var(--g1),var(--g2));color:#fff;box-shadow:0 10px 30px color-mix(in srgb,var(--g2) 35%,transparent)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px color-mix(in srgb,var(--g2) 50%,transparent)}
+.btn-ghost{background:rgba(255,255,255,.06);border-color:var(--border);color:var(--text)}
+.btn-ghost:hover{background:rgba(255,255,255,.11);transform:translateY(-2px)}
+
+/* sections */
+.section{padding:92px 0}
+.section.alt{background:var(--bg2)}
+.shead{max-width:640px;margin:0 auto 46px;text-align:center}
+.shead .kicker{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--g2);margin-bottom:12px}
+.shead h2{font-size:clamp(1.8rem,4vw,2.7rem);margin:0 0 12px}
+.shead p{color:var(--muted);margin:0}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .75s cubic-bezier(.16,1,.3,1),transform .75s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* marquee */
+.marquee{overflow:hidden;border-block:1px solid var(--border);padding:16px 0;background:var(--bg2)}
+.marquee-track{display:flex;gap:52px;width:max-content;animation:scroll 26s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee span{font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+@keyframes scroll{to{transform:translateX(-50%)}}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:26px;text-align:center}
+.stats b{display:block;font-size:clamp(1.9rem,4vw,2.7rem);font-weight:800;font-family:'Plus Jakarta Sans',Inter,sans-serif;font-variant-numeric:tabular-nums}
+.stats span{color:var(--muted);font-size:14px}
+
+/* work gallery */
+.work{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.tile{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:4/3;border:1px solid var(--border);cursor:pointer}
+.tile img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.tile:hover img{transform:scale(1.08)}
+.tile-cap{position:absolute;inset:auto 0 0 0;padding:20px;background:linear-gradient(to top,rgba(4,4,8,.92),transparent);transform:translateY(8px);opacity:.85;transition:.35s ease}
+.tile:hover .tile-cap{transform:none;opacity:1}
+.tile-cap h4{margin:0 0 3px;font-size:1.05rem}
+.tile-cap p{margin:0;font-size:13px;color:var(--muted)}
+
+/* feature cards */
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
+.card:hover{transform:translateY(-6px);border-color:color-mix(in srgb,var(--g2) 45%,transparent);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.card .ico{font-size:24px;color:var(--g2);margin-bottom:12px;display:block}
+.card h3{margin:0 0 8px;font-size:1.08rem}
+.card p{color:var(--muted);margin:0;font-size:14.5px}
+
+/* testimonial carousel */
+.quotes{position:relative;max-width:780px;margin:0 auto;min-height:210px}
+.quote{position:absolute;inset:0;opacity:0;transform:translateY(14px);transition:.6s cubic-bezier(.16,1,.3,1);text-align:center;pointer-events:none}
+.quote.on{opacity:1;transform:none;pointer-events:auto}
+.quote .mark{font-size:52px;line-height:1;color:var(--g2);opacity:.5;font-family:Georgia,serif}
+.quote p{font-size:clamp(1.05rem,2.2vw,1.35rem);margin:6px 0 20px}
+.qwho{display:flex;align-items:center;justify-content:center;gap:12px}
+.qwho img{width:44px;height:44px;border-radius:50%;object-fit:cover}
+.qwho b{display:block;font-size:14.5px}
+.qwho span{color:var(--muted);font-size:13px}
+.dots{display:flex;gap:8px;justify-content:center;margin-top:26px}
+.dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.22);cursor:pointer;transition:.3s}
+.dots i.on{width:26px;border-radius:999px;background:linear-gradient(90deg,var(--g1),var(--g2))}
+
+/* pricing */
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:22px;align-items:stretch}
+.tier{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:30px;display:flex;flex-direction:column}
+.tier.pop{background:linear-gradient(var(--bg2),var(--bg2)) padding-box,linear-gradient(135deg,var(--g1),var(--g2)) border-box;border:1px solid transparent;position:relative}
+.ribbon{position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;border-radius:999px;background:linear-gradient(90deg,var(--g1),var(--g2));color:#fff}
+.tier h3{margin:0 0 4px;font-size:1.1rem}
+.tier .price{font-size:2.4rem;font-weight:800;font-family:'Plus Jakarta Sans',Inter,sans-serif;margin:12px 0 2px}
+.tier .per{color:var(--muted);font-size:13px;margin-bottom:20px}
+.tier ul{list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:11px;flex:1}
+.tier li{display:flex;gap:9px;font-size:14.5px;color:var(--muted)}
+.tier li i{color:var(--g2)}
+
+/* faq */
+.faq{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.q{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.q button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 22px;background:none;border:0;color:var(--text);font:inherit;font-weight:650;text-align:left;cursor:pointer}
+.q button i{transition:transform .3s ease;color:var(--g2)}
+.q.open button i{transform:rotate(45deg)}
+.q .a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.q.open .a{max-height:240px}
+.q .a p{margin:0;padding:0 22px 20px;color:var(--muted);font-size:14.5px}
+
+/* cta */
+.cta-band{position:relative;overflow:hidden;border-radius:24px;padding:64px 32px;text-align:center;background:linear-gradient(130deg,color-mix(in srgb,var(--g1) 65%,#0a0a12),color-mix(in srgb,var(--g2) 40%,#0a0a12))}
+.cta-band h2{font-size:clamp(1.8rem,4vw,2.7rem);margin:0 0 14px}
+.cta-band p{color:#e9ebf8;margin:0 auto 28px;max-width:520px}
+
+/* footer */
+footer{border-top:1px solid var(--border);padding:56px 0 30px;background:var(--bg2)}
+.fgrid{display:grid;grid-template-columns:2fr repeat(3,1fr);gap:34px;margin-bottom:38px}
+.fgrid p{color:var(--muted);font-size:14px;margin:12px 0 0;max-width:280px}
+.fcol h5{margin:0 0 14px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--text)}
+.fcol a{display:block;color:var(--muted);font-size:14px;margin-bottom:9px;transition:color .15s}
+.fcol a:hover{color:var(--text)}
+.fbot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding-top:24px;border-top:1px solid var(--border);color:var(--muted);font-size:13.5px}
+.socials{display:flex;gap:14px}
+.socials a{width:34px;height:34px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;transition:.2s}
+.socials a:hover{background:var(--card);transform:translateY(-2px);color:var(--g2)}
+
+@media(max-width:860px){
+  .navlinks{display:none}.burger{display:block}
+  .fgrid{grid-template-columns:1fr 1fr;gap:26px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+
+.hero{position:relative;overflow:hidden;padding:0}
+.hero-grid{display:grid;grid-template-columns:1fr 1.15fr;align-items:center;gap:0;min-height:76vh}
+.hero-copy{padding:70px 24px 70px max(24px,calc((100vw - 1180px)/2))}
+.hero-copy h1{font-size:clamp(2.2rem,4.6vw,3.7rem);margin:0 0 20px;font-weight:800}
+.hero-copy h1 span{display:block;opacity:0;transform:translateY(24px);animation:rise .85s cubic-bezier(.16,1,.3,1) forwards}
+.hero-copy h1 span:nth-child(2){animation-delay:.12s;color:var(--g2)}
+.hero-copy h1 span:nth-child(3){animation-delay:.24s}
+@keyframes rise{to{opacity:1;transform:none}}
+.hero-copy .sub{color:var(--muted);font-size:1.05rem;max-width:430px;margin:0 0 30px;opacity:0;animation:rise .85s .34s cubic-bezier(.16,1,.3,1) forwards}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:38px;opacity:0;animation:rise .85s .44s cubic-bezier(.16,1,.3,1) forwards}
+.trust{display:flex;gap:34px;flex-wrap:wrap;opacity:0;animation:rise .85s .56s cubic-bezier(.16,1,.3,1) forwards}
+.trust div{display:flex;align-items:center;gap:11px}
+.trust .tico{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--g2);font-size:18px;flex:none}
+.trust b{display:block;font-size:13px}.trust span{color:var(--muted);font-size:12.5px}
+.hero-img{position:relative;height:100%;min-height:420px}
+.hero-img img{width:100%;height:100%;object-fit:cover}
+.hero-img::after{content:"";position:absolute;inset:0;background:linear-gradient(to right,var(--bg) 0%,rgba(10,22,40,.55) 22%,transparent 60%)}
+.rule{width:56px;height:3px;border-radius:2px;background:var(--g2);margin:14px auto 18px}
+.rule.l{margin-left:0}
+.svc{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.svc-card{background:var(--bg2);border:1px solid var(--border);border-radius:15px;overflow:hidden;transition:transform .25s ease,border-color .25s ease}
+.svc-card:hover{transform:translateY(-6px);border-color:color-mix(in srgb,var(--g2) 45%,transparent)}
+.svc-top{position:relative;height:140px}
+.svc-top img{width:100%;height:100%;object-fit:cover}
+.svc-ico{position:absolute;left:16px;bottom:-18px;width:44px;height:44px;border-radius:12px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--g2);font-size:19px}
+.svc-body{padding:32px 18px 20px}
+.svc-body h3{margin:0 0 8px;font-size:1.02rem}
+.svc-body p{margin:0 0 14px;color:var(--muted);font-size:13.6px}
+.more{color:var(--g2);font-size:13.5px;font-weight:700;display:inline-flex;align-items:center;gap:7px}
+.more i{transition:transform .25s ease}
+.more:hover i{transform:translateX(4px)}
+.why{background:var(--g2);color:#20180a;border-radius:15px;padding:22px;display:flex;flex-direction:column}
+.why .wico{font-size:26px;margin-bottom:12px}
+.why h3{margin:0 0 14px;font-size:1.05rem;color:#20180a}
+.why ul{list-style:none;padding:0;margin:0 0 16px;display:flex;flex-direction:column;gap:10px}
+.why li{display:flex;gap:9px;font-size:12.8px;font-weight:600}
+.why li i{color:#fff}
+.why .strip{margin-top:auto;border-radius:10px;overflow:hidden;height:92px}
+.why .strip img{width:100%;height:100%;object-fit:cover}
+.about-card{display:grid;grid-template-columns:1fr 1.1fr;gap:0;background:var(--bg2);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.about-card .ac-copy{padding:48px 40px}
+.about-card .kick{color:var(--g2);font-size:12.5px;font-weight:700;letter-spacing:.1em}
+.about-card h2{font-size:clamp(1.5rem,3vw,2.1rem);margin:10px 0 0}
+.about-card p{color:var(--muted);font-size:14.5px;margin:0 0 24px}
+.about-card img{width:100%;height:100%;object-fit:cover;min-height:330px}
+.listings{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.listing{border-radius:14px;overflow:hidden;transition:transform .25s ease}
+.listing:hover{transform:translateY(-6px)}
+.listing .ph{height:190px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.listing .ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.listing:hover .ph img{transform:scale(1.07)}
+.listing h4{margin:14px 0 5px;font-size:1.02rem}
+.listing p{margin:0;color:var(--muted);font-size:13.4px}
+.news input{width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);font:inherit;font-size:13.5px;margin-bottom:10px}
+.news input:focus{outline:none;border-color:var(--g2)}
+.news button{width:100%;padding:11px;border-radius:8px;border:0;background:var(--g2);color:#20180a;font:inherit;font-weight:800;font-size:13.5px;cursor:pointer;transition:.2s}
+.news button:hover{filter:brightness(1.08)}
+.news .ok{color:var(--g2);font-size:12.5px;margin:8px 0 0;display:none}
+.news.done .ok{display:block}
+@media(max-width:1000px){.svc{grid-template-columns:repeat(2,1fr)}.listings{grid-template-columns:1fr 1fr}}
+@media(max-width:860px){
+  .hero-grid{grid-template-columns:1fr}.hero-copy{padding:56px 24px 40px}
+  .hero-img{min-height:280px}.hero-img::after{background:linear-gradient(to bottom,rgba(10,22,40,.6),transparent 40%)}
+  .svc,.listings{grid-template-columns:1fr}.about-card{grid-template-columns:1fr}
+}
+</style></head>
+<body>
+<div class="prog" id="prog"></div>
+<nav class="nav"><div class="wrap nav-in">
+  <div class="brand"><i></i>Propertix</div>
+  <div class="navlinks"><a href="#services">Services</a><a href="#about">About Us</a><a href="#properties">Properties</a><a href="#reviews">Owners</a><a href="#faq">Contact</a></div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <a class="btn btn-primary" href="#cta" style="padding:9px 18px">Get a Quote</a>
+    <button class="burger" id="burger" aria-label="Menu"><i class="ri-menu-3-line"></i></button>
+  </div>
+</div><div class="drawer" id="drawer"><a href="#services">Services</a><a href="#about">About Us</a><a href="#properties">Properties</a><a href="#reviews">Owners</a><a href="#faq">Contact</a></div></nav>
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <h1><span>We Manage</span><span>Properties,</span><span>You Enjoy Peace.</span></h1>
+      <p class="sub">Professional property management services that protect your investment and maximize your returns.</p>
+      <div class="hero-btns"><a class="btn btn-primary" href="#services">Our Services</a><a class="btn btn-ghost" href="#properties">View Properties</a></div>
+      <div class="trust">
+        <div><span class="tico"><i class="ri-shield-check-line"></i></span><div><b>Trusted</b><span>Property Management</span></div></div>
+        <div><span class="tico"><i class="ri-group-line"></i></span><div><b>Happy Owners</b><span>&amp; Tenants</span></div></div>
+      </div>
+    </div>
+    <div class="hero-img"><img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1600&q=80" alt="Managed apartment building"></div>
+  </div>
+</section>
+
+<section class="section" id="services"><div class="wrap">
+  <div class="shead reveal"><h2>Our Management Services</h2><div class="rule"></div><p>We provide end-to-end property management solutions tailored to your needs — from marketing and tenant placement to maintenance and financial reporting.</p></div>
+  <div class="svc">
+    <div class="svc-card reveal">
+      <div class="svc-top"><img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80" alt="Residential Management" loading="lazy"><span class="svc-ico"><i class="ri-home-4-line"></i></span></div>
+      <div class="svc-body"><h3>Residential Management</h3><p>Comprehensive management for single-family homes, apartments, and multi-unit properties.</p><a class="more" href="#">Learn More <i class="ri-arrow-right-line"></i></a></div>
+    </div><div class="svc-card reveal">
+      <div class="svc-top"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80" alt="Commercial Management" loading="lazy"><span class="svc-ico"><i class="ri-building-2-line"></i></span></div>
+      <div class="svc-body"><h3>Commercial Management</h3><p>Expert management for office spaces, retail properties, and commercial complexes.</p><a class="more" href="#">Learn More <i class="ri-arrow-right-line"></i></a></div>
+    </div><div class="svc-card reveal">
+      <div class="svc-top"><img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&q=80" alt="Maintenance Services" loading="lazy"><span class="svc-ico"><i class="ri-tools-line"></i></span></div>
+      <div class="svc-body"><h3>Maintenance Services</h3><p>24/7 maintenance support to ensure your property stays in perfect condition.</p><a class="more" href="#">Learn More <i class="ri-arrow-right-line"></i></a></div>
+    </div>
+    <div class="why reveal">
+      <span class="wico"><i class="ri-home-4-line"></i></span><h3>Why Choose Us?</h3>
+      <ul><li><i class="ri-check-line"></i>Experienced Management Team</li><li><i class="ri-check-line"></i>Transparent Communication</li><li><i class="ri-check-line"></i>Maximized Rental Income</li><li><i class="ri-check-line"></i>Minimal Vacancy Rates</li><li><i class="ri-check-line"></i>Reliable Maintenance</li></ul>
+      <div class="strip"><img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&q=80" alt="" loading="lazy"></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="section" id="about"><div class="wrap">
+  <div class="about-card reveal">
+    <div class="ac-copy">
+      <span class="kick">About Propertix</span>
+      <h2>We Take Care<br>So You Don't Have To</h2><div class="rule l"></div>
+      <p>Propertix Management is a full-service property management company dedicated to providing exceptional service to property owners and tenants. Our goal is to protect your investment, increase property value, and deliver peace of mind.</p>
+      <a class="btn btn-primary" href="#reviews">More About Us</a>
+    </div>
+    <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&q=80" alt="" loading="lazy">
+  </div>
+</div></section>
+
+<section class="section" id="properties"><div class="wrap">
+  <div class="shead reveal"><h2>Featured Properties</h2><div class="rule"></div><p>Explore a selection of properties we currently manage.</p></div>
+  <div class="listings">
+    <div class="listing reveal"><div class="ph"><img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=80" alt="Modern Family Home" loading="lazy"></div><h4>Modern Family Home</h4><p>3 Bed • 2 Bath • 2200 Sqft</p></div><div class="listing reveal"><div class="ph"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80" alt="Downtown Office Space" loading="lazy"></div><h4>Downtown Office Space</h4><p>2000 Sqft • Prime Location</p></div><div class="listing reveal"><div class="ph"><img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80" alt="Luxury Apartment" loading="lazy"></div><h4>Luxury Apartment</h4><p>2 Bed • 2 Bath • City View</p></div>
+  </div>
+</div></section>
+
+<section class="section" id="about"><div class="wrap">
+  <div class="stats">
+    <div class="reveal"><b data-count="2400">0</b><span>Units managed</span></div><div class="reveal"><b data-count="98%">0</b><span>Occupancy rate</span></div><div class="reveal"><b data-count="18">0</b><span>Years in business</span></div><div class="reveal"><b data-count="4.9">0</b><span>Owner rating</span></div>
+  </div>
+</div></section>
+<section class="section alt" id="reviews"><div class="wrap">
+  <div class="shead reveal"><span class="kicker">Testimonials</span><h2>What owners and tenants say</h2></div>
+  <div class="quotes">
+    <div class="quote on"><div class="mark">&ldquo;</div><p>Two rentals with Propertix for six years. I've never once had to chase a repair or a rent payment.</p><div class="qwho"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80" alt=""><div style="text-align:left"><b>Gloria Mendez</b><span>Owner · 2 properties</span></div></div></div><div class="quote"><div class="mark">&ldquo;</div><p>They filled a vacancy in nine days at above my asking rent. The previous manager took two months.</p><div class="qwho"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80" alt=""><div style="text-align:left"><b>Aaron Whitlock</b><span>Owner · 14 units</span></div></div></div><div class="quote"><div class="mark">&ldquo;</div><p>Maintenance actually answers at 9pm. As a tenant that's the whole review.</p><div class="qwho"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" alt=""><div style="text-align:left"><b>Nia Foster</b><span>Tenant · Luxury Apartment</span></div></div></div>
+  </div>
+  <div class="dots" id="dots"><i class="on" data-i="0"></i><i class="" data-i="1"></i><i class="" data-i="2"></i></div>
+</div></section>
+<section class="section" id="pricing"><div class="wrap">
+  <div class="shead reveal"><span class="kicker">Pricing</span><h2>Management plans</h2><p>Flat percentage of collected rent. No leasing surprises.</p></div>
+  <div class="tiers">
+    <div class="tier reveal">
+      <h3>Essential</h3><div class="price">6%</div><div class="per">of monthly rent</div>
+      <ul><li><i class="ri-check-line"></i>Rent collection</li><li><i class="ri-check-line"></i>Owner portal & statements</li><li><i class="ri-check-line"></i>Tenant screening</li><li><i class="ri-check-line"></i>Annual inspection</li></ul>
+      <a class="btn btn-ghost" href="#cta">Get started</a>
+    </div><div class="tier pop reveal"><span class="ribbon">Most popular</span>
+      <h3>Full Service</h3><div class="price">8%</div><div class="per">of monthly rent</div>
+      <ul><li><i class="ri-check-line"></i>Everything in Essential</li><li><i class="ri-check-line"></i>24/7 maintenance coordination</li><li><i class="ri-check-line"></i>Marketing & tenant placement</li><li><i class="ri-check-line"></i>Quarterly inspections</li><li><i class="ri-check-line"></i>Eviction protection</li></ul>
+      <a class="btn btn-primary" href="#cta">Most owners pick this</a>
+    </div><div class="tier reveal">
+      <h3>Commercial</h3><div class="price">Custom</div><div class="per">tailored quote</div>
+      <ul><li><i class="ri-check-line"></i>Everything in Full Service</li><li><i class="ri-check-line"></i>CAM reconciliation</li><li><i class="ri-check-line"></i>Lease negotiation</li><li><i class="ri-check-line"></i>Dedicated account manager</li></ul>
+      <a class="btn btn-ghost" href="#cta">Request a quote</a>
+    </div>
+  </div>
+</div></section>
+<section class="section alt" id="faq"><div class="wrap">
+  <div class="shead reveal"><span class="kicker">FAQ</span><h2>Questions, answered</h2></div>
+  <div class="faq">
+    <div class="q open"><button><span>What does Propertix actually handle?</span><i class="ri-add-line"></i></button><div class="a"><p>Marketing, tenant screening and placement, rent collection, maintenance coordination, inspections, and monthly financial reporting. You approve the big decisions; we handle everything else.</p></div></div><div class="q"><button><span>How quickly do you fill a vacancy?</span><i class="ri-add-line"></i></button><div class="a"><p>Our current average is 14 days from listing to signed lease. We market across the major portals plus our own tenant waitlist.</p></div></div><div class="q"><button><span>When do I get paid?</span><i class="ri-add-line"></i></button><div class="a"><p>Owner disbursements go out by the 10th of each month, with a full statement in your owner portal. No holding periods.</p></div></div><div class="q"><button><span>Can I cancel the agreement?</span><i class="ri-add-line"></i></button><div class="a"><p>Yes — 30 days' written notice, no termination fee. We'd rather earn the renewal than trap you in a contract.</p></div></div>
+  </div>
+</div></section>
+<section class="section" id="cta"><div class="wrap">
+  <div class="cta-band reveal">
+    <h2>Ready to stop managing and start owning?</h2><p>Free rental analysis for your property, no obligation.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a class="btn btn-primary" href="#">Our Services</a>
+      <a class="btn btn-ghost" href="#">View Properties</a>
+    </div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="fgrid">
+    <div><div class="brand"><i></i>Propertix</div><p>Professional property management services that make property ownership simple and profitable.</p>
+      <div class="socials" style="margin-top:16px"><a href="#"><i class="ri-facebook-fill"></i></a><a href="#"><i class="ri-twitter-x-line"></i></a><a href="#"><i class="ri-linkedin-fill"></i></a><a href="#"><i class="ri-instagram-line"></i></a></div>
+    </div>
+    <div class="fcol"><h5>Quick Links</h5><a href="#">Home</a><a href="#about">About Us</a><a href="#services">Services</a><a href="#properties">Properties</a><a href="#">Owners</a><a href="#">Tenants</a></div>
+    <div class="fcol"><h5>Our Services</h5><a href="#">Residential Management</a><a href="#">Commercial Management</a><a href="#">Maintenance Services</a><a href="#">Tenant Placement</a><a href="#">Rent Collection</a></div>
+    <div class="fcol"><h5>Newsletter</h5><p style="color:var(--muted);font-size:13.5px;margin:0 0 12px">Subscribe for property management tips.</p>
+      <form class="news" id="news" novalidate><input type="email" placeholder="Your email address" required><button type="submit">Subscribe</button><p class="ok">✓ Thanks — you're subscribed.</p></form>
+    </div>
+  </div>
+  <div class="fbot" style="justify-content:center"><span>© 2026 Propertix Management. A MotionHub live demo.</span></div>
+</div></footer>
+<script>
+// reveal
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+// scroll progress
+const prog=document.getElementById('prog');
+addEventListener('scroll',()=>{const h=document.documentElement,m=h.scrollHeight-h.clientHeight;prog.style.width=(m>0?h.scrollTop/m*100:0)+'%'},{passive:true});
+// mobile drawer
+const bg=document.getElementById('burger'),dw=document.getElementById('drawer');
+if(bg)bg.onclick=()=>dw.classList.toggle('open');
+if(dw)dw.querySelectorAll('a').forEach(a=>a.onclick=()=>dw.classList.remove('open'));
+// count-up stats
+const cio=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const el=e.target,raw=el.dataset.count,num=parseFloat(raw.replace(/[^0-9.]/g,'')),suf=raw.replace(/[0-9.,]/g,'');const t0=performance.now();
+(function tick(now){const p=Math.min(1,(now-t0)/1400),v=num*(1-Math.pow(1-p,3));el.textContent=(num>=1000?Math.round(v).toLocaleString():(num%1?v.toFixed(1):Math.round(v)))+suf;if(p<1)requestAnimationFrame(tick)})(t0);
+cio.unobserve(el)}),{threshold:.5});
+document.querySelectorAll('[data-count]').forEach(el=>cio.observe(el));
+// testimonials
+const qs=[...document.querySelectorAll('.quote')],ds=[...document.querySelectorAll('.dots i')];let qi=0,qt;
+function goQ(i){qs.forEach((q,n)=>q.classList.toggle('on',n===i));ds.forEach((d,n)=>d.classList.toggle('on',n===i));qi=i}
+function autoQ(){qt=setInterval(()=>goQ((qi+1)%qs.length),6000)}
+ds.forEach(d=>d.onclick=()=>{clearInterval(qt);goQ(+d.dataset.i);autoQ()});
+if(qs.length>1)autoQ();
+const qw=document.querySelector('.quotes');
+if(qw){qw.onmouseenter=()=>clearInterval(qt);qw.onmouseleave=autoQ}
+// faq
+document.querySelectorAll('.q button').forEach(b=>b.onclick=()=>b.parentElement.classList.toggle('open'));
+
+const nf=document.getElementById('news');
+if(nf)nf.onsubmit=e=>{e.preventDefault();const i=nf.querySelector('input');if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(i.value)){i.style.borderColor='#ff8a9c';return}i.style.borderColor='';nf.classList.add('done');i.value=''};
+</script>
+</body></html>
