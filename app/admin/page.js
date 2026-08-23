@@ -8,6 +8,13 @@ import {
   isConfigured, signIn, signUp, signInWithGoogle, signOut,
   getUser, getProfile, getPromptsAdmin, addPrompt, updatePrompt, deletePrompt, upsertPrompts,
 } from "@/lib/supabaseClient";
+import { runPrompt, getSavedKey, saveKey } from "@/lib/runPrompt";
+import PreviewModal from "@/components/PreviewModal";
+
+const MODELS = {
+  claude: ["claude-sonnet-5", "claude-opus-5", "claude-fable-5", "claude-haiku-4-5-20251001"],
+  openai: ["gpt-4o", "gpt-4o-mini", "gpt-4.1"],
+};
 
 const GOOGLE_SVG = (
   <svg viewBox="0 0 48 48" width="17" height="17" style={{ verticalAlign: "-3px" }} aria-hidden="true">
@@ -166,6 +173,18 @@ function Dashboard({ user, onLogout }) {
   const [list, setList] = useState([]);
   const [msg, setMsg] = useState({ text: "", color: "var(--muted)" });
 
+  // Live "Preview with AI" — runs whatever prompt text is currently in the form
+  // (or the code-view JSON) through Claude/OpenAI and shows the actual rendered
+  // result, animations and all, before saving.
+  const [showRunPanel, setShowRunPanel] = useState(false);
+  const [provider, setProvider] = useState("claude");
+  const [model, setModel] = useState(MODELS.claude[0]);
+  const [apiKey, setApiKey] = useState("");
+  const [running, setRunning] = useState(false);
+  const [runError, setRunError] = useState("");
+  const [resultHtml, setResultHtml] = useState("");
+  const [showLivePreview, setShowLivePreview] = useState(false);
+
   useEffect(() => { loadList(); }, []);
 
   async function loadList() {
@@ -200,6 +219,36 @@ function Dashboard({ user, onLogout }) {
       catch (e) { setMsg({ text: "Invalid JSON: " + e.message, color: "#ff8a9c" }); return; }
     }
     setCodeMode((v) => !v);
+  }
+
+  function currentPromptText() {
+    if (codeMode) {
+      try { return (JSON.parse(codeText).prompt || "").trim(); }
+      catch { return ""; }
+    }
+    return form.prompt.trim();
+  }
+
+  function switchProvider(pr) { setProvider(pr); setModel(MODELS[pr][0]); setApiKey(getSavedKey(pr)); }
+  function openRunPanel() {
+    const text = currentPromptText();
+    if (!text) { setMsg({ text: "Write or paste a prompt first.", color: "#ff8a9c" }); return; }
+    setApiKey(getSavedKey(provider));
+    setRunError("");
+    setShowRunPanel(true);
+  }
+  async function runPreview() {
+    const text = currentPromptText();
+    if (!text) { setRunError("No prompt text to run."); return; }
+    if (!apiKey.trim()) { setRunError("Enter your API key first."); return; }
+    saveKey(provider, apiKey.trim());
+    setRunning(true); setRunError("");
+    try {
+      const html = await runPrompt({ provider, apiKey: apiKey.trim(), model, prompt: text });
+      setResultHtml(html);
+      setShowLivePreview(true);
+    } catch (e) { setRunError(e.message || "Run failed."); }
+    finally { setRunning(false); }
   }
 
   async function save() {
@@ -320,10 +369,48 @@ function Dashboard({ user, onLogout }) {
 
           <div className="card-actions" style={{ marginTop: 8 }}>
             <button className="btn btn-primary" onClick={save}>{editingId ? "Save changes" : "Add prompt"}</button>
+            <button className="btn btn-ghost btn-sm" onClick={openRunPanel}>👁 Preview with AI</button>
             {editingId && <button className="btn btn-ghost btn-sm" onClick={resetForm}>Cancel edit</button>}
           </div>
+
+          {showRunPanel && (
+            <div className="prompt-box" style={{ marginTop: 16 }}>
+              <label className="builders">Provider</label>
+              <div style={{ display: "flex", gap: 8, margin: "6px 0 14px" }}>
+                <button className={"chip" + (provider === "claude" ? " active" : "")} onClick={() => switchProvider("claude")}>Claude</button>
+                <button className={"chip" + (provider === "openai" ? " active" : "")} onClick={() => switchProvider("openai")}>OpenAI</button>
+              </div>
+              <label className="builders">Model</label>
+              <select className="fld" value={model} onChange={(e) => setModel(e.target.value)}>
+                {MODELS[provider].map((m) => <option key={m} value={m}>{m}</option>)}
+              </select>
+              <label className="builders">Your {provider === "claude" ? "Anthropic" : "OpenAI"} API key</label>
+              <input
+                className="fld" type="password" placeholder={provider === "claude" ? "sk-ant-…" : "sk-…"}
+                value={apiKey} onChange={(e) => setApiKey(e.target.value)}
+              />
+              <p className="builders" style={{ margin: "-8px 0 12px" }}>
+                Renders exactly what's currently in {codeMode ? "the code view's" : "the form's"} prompt field — with all
+                animations/effects — before you save it live. Stored only in your browser.
+              </p>
+              {runError && <p style={{ color: "#ff8a9c", fontSize: 14, margin: "0 0 10px" }}>{runError}</p>}
+              <div className="card-actions">
+                <button className="btn btn-primary btn-sm" onClick={runPreview} disabled={running}>
+                  {running ? "Running…" : "▶ Run & preview"}
+                </button>
+                {resultHtml && (
+                  <button className="btn btn-ghost btn-sm" onClick={() => setShowLivePreview(true)}>👁 View last result</button>
+                )}
+                <button className="btn btn-ghost btn-sm" onClick={() => setShowRunPanel(false)}>Close</button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {showLivePreview && resultHtml && (
+        <PreviewModal html={resultHtml} title={form.title || "Preview"} onClose={() => setShowLivePreview(false)} />
+      )}
 
       <div style={{ marginTop: 24 }}>
         {list.length === 0 ? (
