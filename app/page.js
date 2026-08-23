@@ -4,6 +4,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Gallery from "@/components/Gallery";
+import AnimatedStat from "@/components/AnimatedStat";
 import { useAuth } from "@/lib/useAuth";
 import { useReveal } from "@/lib/useReveal";
 
@@ -32,9 +33,9 @@ export default function HomePage() {
             <Link className="btn btn-ghost" href="/pricing">See pricing</Link>
           </div>
           <div className="hero-stats">
-            <div className="stat"><b>2,300+</b><span>Motion prompts</span></div>
-            <div className="stat"><b>150+</b><span>Animated sections</span></div>
-            <div className="stat"><b>40+</b><span>Claude coding kits</span></div>
+            <AnimatedStat value="2,300+" label="Motion prompts" />
+            <AnimatedStat value="150+" label="Animated sections" />
+            <AnimatedStat value="40+" label="Claude coding kits" />
           </div>
         </div>
       </section>
@@ -47,20 +48,20 @@ export default function HomePage() {
             <h2>How it works</h2>
             <p>Three steps from idea to a live, animated website.</p>
           </div>
-          <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))" }}>
-            <div className="card in">
+          <div className="grid reveal-group" style={{ gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))" }}>
+            <div className="card" style={{ "--i": 0 }}>
               <div className="card-body">
                 <h3>1 · Browse &amp; copy</h3>
                 <p className="desc">Find a motion design or a Claude coding kit you love and copy its prompt with one click.</p>
               </div>
             </div>
-            <div className="card in">
+            <div className="card" style={{ "--i": 1 }}>
               <div className="card-body">
                 <h3>2 · Paste into your AI</h3>
                 <p className="desc">Drop it into Claude, Cursor, v0, Bolt or Lovable. Add your product details where marked.</p>
               </div>
             </div>
-            <div className="card in">
+            <div className="card" style={{ "--i": 2 }}>
               <div className="card-body">
                 <h3>3 · Customize &amp; launch</h3>
                 <p className="desc">Tweak colors and copy, then ship. You own the output — no lock‑in, no watermark.</p>
@@ -76,20 +77,20 @@ export default function HomePage() {
             <h2>Questions</h2>
             <p>Everything you need to know before going Unlimited.</p>
           </div>
-          <div className="reveal">
-            <div className="card in" style={{ marginBottom: 14 }}>
+          <div className="reveal-group">
+            <div className="card" style={{ marginBottom: 14, "--i": 0 }}>
               <div className="card-body">
                 <h3>What exactly am I buying?</h3>
                 <p className="desc">Access to copy every premium prompt in the library — motion‑site designs and Claude coding kits. The prompts generate the code; you own whatever your AI builds.</p>
               </div>
             </div>
-            <div className="card in" style={{ marginBottom: 14 }}>
+            <div className="card" style={{ marginBottom: 14, "--i": 1 }}>
               <div className="card-body">
                 <h3>Which AI tools do the prompts work with?</h3>
                 <p className="desc">Claude, Cursor, v0, Bolt, Lovable and Replit. Each prompt lists its best‑fit builders.</p>
               </div>
             </div>
-            <div className="card in">
+            <div className="card" style={{ "--i": 2 }}>
               <div className="card-body">
                 <h3>Do I need to code?</h3>
                 <p className="desc">No. Copy, paste, and describe your product. For coding kits, Claude scaffolds the whole app for you.</p>

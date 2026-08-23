@@ -11,6 +11,7 @@ import { getPrompts, subscribeToPrompts } from "@/lib/supabaseClient";
 import { getPreview, isVideo, useCasesFor } from "@/lib/previews";
 import { runPrompt, getSavedKey, saveKey } from "@/lib/runPrompt";
 import { useAuth } from "@/lib/useAuth";
+import { useReveal } from "@/lib/useReveal";
 
 const MODELS = {
   claude: ["claude-sonnet-5", "claude-opus-5", "claude-fable-5", "claude-haiku-4-5-20251001"],
@@ -40,6 +41,7 @@ export default function TemplatePage() {
   const [runError, setRunError] = useState("");
   const [resultHtml, setResultHtml] = useState("");
   const [showPreview, setShowPreview] = useState(false);
+  const relatedRef = useReveal([id]);
 
   // Merge DB prompts over the local seed so admin edits show here too.
   useEffect(() => {
@@ -197,14 +199,14 @@ export default function TemplatePage() {
 
           {/* Related */}
           {related.length > 0 && (
-            <section className="tpl-section">
+            <section className="tpl-section" ref={relatedRef}>
               <h2>More templates</h2>
-              <div className="grid">
-                {related.map((r) => {
+              <div className="grid reveal-group">
+                {related.map((r, i) => {
                   const rm = getPreview(r);
                   const rg = `linear-gradient(135deg,${r.gradient[0]},${r.gradient[1]})`;
                   return (
-                    <Link className="card in" key={r.id} href={`/templates/${r.id}`}>
+                    <Link className="card" key={r.id} href={`/templates/${r.id}`} style={{ "--i": i }}>
                       <div className="card-preview" style={{ background: rg }}>
                         {rm && isVideo(rm) ? (
                           <video className="card-media" src={rm} autoPlay loop muted playsInline preload="metadata" aria-hidden="true" />

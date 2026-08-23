@@ -1,4 +1,6 @@
 import "./globals.css";
+import ScrollProgress from "@/components/ScrollProgress";
+import PageTransition from "@/components/PageTransition";
 
 export const metadata = {
   title: "MotionHub — Prompts that build motion & Claude‑coded websites",
@@ -15,7 +17,10 @@ export default function RootLayout({ children }) {
           href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <ScrollProgress />
+        <PageTransition>{children}</PageTransition>
+      </body>
     </html>
   );
 }

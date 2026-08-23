@@ -58,12 +58,12 @@ export default function Gallery({ auth }) {
         {list.length === 0 ? (
           <p style={{ color: "var(--muted)" }}>No prompts yet in this category.</p>
         ) : (
-          <div className="grid">
-            {list.map((p) => {
+          <div className="grid reveal-group">
+            {list.map((p, i) => {
               const grad = `linear-gradient(135deg,${p.gradient[0]},${p.gradient[1]})`;
               const media = getPreview(p);
               return (
-                <Link className="card in" key={p.id} href={`/templates/${p.id}`}>
+                <Link className="card" key={p.id} href={`/templates/${p.id}`} style={{ "--i": i % 8 }}>
                   <div className="card-preview" style={{ background: grad }}>
                     {media && isVideo(media) ? (
                       <video
