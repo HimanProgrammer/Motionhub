@@ -7,11 +7,13 @@ import { getPrompts, subscribeToPrompts } from "@/lib/supabaseClient";
 import { getPreview, isVideo } from "@/lib/previews";
 import { useReveal } from "@/lib/useReveal";
 import AuthModal from "./AuthModal";
+import TemplatePreviewModal from "./TemplatePreviewModal";
 
 export default function Gallery({ auth }) {
   const [prompts, setPrompts] = useState(LOCAL_PROMPTS);
   const [activeCat, setActiveCat] = useState("all");
   const [authOpen, setAuthOpen] = useState(false);
+  const [previewPrompt, setPreviewPrompt] = useState(null);
   const revealRef = useReveal([prompts, activeCat]);
 
   const { configured, refresh } = auth;
@@ -78,6 +80,13 @@ export default function Gallery({ auth }) {
                     <span className={"badge " + (p.tier === "premium" ? "premium" : "free")}>
                       {p.tier === "premium" ? "Premium" : "Free"}
                     </span>
+                    <button
+                      type="button"
+                      className="card-preview-btn"
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setPreviewPrompt(p); }}
+                    >
+                      👁 Preview
+                    </button>
                   </div>
                   <div className="card-body">
                     <div className="card-title-row">
@@ -101,6 +110,7 @@ export default function Gallery({ auth }) {
       </div>
 
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} onSignedIn={() => { setAuthOpen(false); refresh(); }} />
+      <TemplatePreviewModal prompt={previewPrompt} onClose={() => setPreviewPrompt(null)} />
     </section>
   );
 }
