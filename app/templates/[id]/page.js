@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PreviewModal from "@/components/PreviewModal";
-import { CATEGORIES, PROMPTS as LOCAL_PROMPTS } from "@/lib/prompts";
+import { CATEGORIES, PROMPTS_PUBLIC as LOCAL_PROMPTS } from "@/lib/promptsPublic";
 import { getPrompts, subscribeToPrompts } from "@/lib/supabaseClient";
 import { getPreview, isVideo, useCasesFor } from "@/lib/previews";
 import { runPrompt, getSavedKey, saveKey } from "@/lib/runPrompt";

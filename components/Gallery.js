@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CATEGORIES, PROMPTS as LOCAL_PROMPTS } from "@/lib/prompts";
+import { CATEGORIES, PROMPTS_PUBLIC as LOCAL_PROMPTS } from "@/lib/promptsPublic";
 import { getPrompts, subscribeToPrompts } from "@/lib/supabaseClient";
 import { getPreview, isVideo } from "@/lib/previews";
 import { useReveal } from "@/lib/useReveal";

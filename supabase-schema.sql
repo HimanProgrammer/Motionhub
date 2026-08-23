@@ -88,3 +88,53 @@ create trigger on_auth_user_created
 --   update public.profiles set is_admin = true, is_unlimited = true
 --   where email = 'you@example.com';
 -- ============================================================
+
+
+-- ============================================================
+-- Server-side gate on premium prompt TEXT (2026-08-23).
+-- Without this, the "prompts" table's `prompt` column is readable in full by anyone
+-- with the public anon key, even though the UI hides it for locked cards — a client-side
+-- hide is not real protection. This makes Postgres itself null the column out.
+-- ============================================================
+
+alter table public.prompts add column if not exists preview text;
+
+create or replace function public.is_entitled()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(
+    (
+      select (p.is_unlimited or p.is_admin or p.email = 'hb.19editor@gmail.com')
+      from public.profiles p
+      where p.id = auth.uid()
+    ),
+    false
+  );
+$$;
+
+grant execute on function public.is_entitled() to anon, authenticated;
+
+-- Public-facing view: premium prompt TEXT is nulled out server-side unless entitled.
+create or replace view public.prompts_public as
+select
+  id, title, category, tags, tier, gradient, builders, description, preview, created_at,
+  case when tier = 'free' or public.is_entitled() then prompt else null end as prompt
+from public.prompts;
+
+grant select on public.prompts_public to anon, authenticated;
+
+-- Raw table select is now gated too (free rows OR entitled), so the admin dashboard
+-- (which reads the raw table for full CRUD) only ever sees premium text if it's an admin.
+drop policy if exists "prompts public read" on public.prompts;
+drop policy if exists "prompts_select_public" on public.prompts;
+create policy "prompts_select_entitled_or_free"
+  on public.prompts for select
+  to anon, authenticated
+  using (tier = 'free' or public.is_entitled());
+
+-- App code: public pages (Gallery, /templates/[id]) must SELECT from "prompts_public",
+-- never the raw "prompts" table. See lib/supabaseClient.js getPrompts() vs getPromptsAdmin().

@@ -6,7 +6,7 @@ import { CATEGORIES } from "@/lib/prompts";
 import { PROMPTS as SEED_PROMPTS } from "@/lib/prompts";
 import {
   isConfigured, signIn, signUp, signInWithGoogle, signOut,
-  getUser, getProfile, getPrompts, addPrompt, updatePrompt, deletePrompt, upsertPrompts,
+  getUser, getProfile, getPromptsAdmin, addPrompt, updatePrompt, deletePrompt, upsertPrompts,
 } from "@/lib/supabaseClient";
 
 const GOOGLE_SVG = (
@@ -169,7 +169,7 @@ function Dashboard({ user, onLogout }) {
   useEffect(() => { loadList(); }, []);
 
   async function loadList() {
-    const prompts = (await getPrompts()) || [];
+    const prompts = (await getPromptsAdmin()) || [];
     setList(prompts);
   }
 
